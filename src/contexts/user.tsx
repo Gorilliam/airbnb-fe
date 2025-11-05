@@ -41,19 +41,19 @@ const getUserProfile = async () => {
       const userProfile: UserProfile = await response.json();
       setUser(userProfile);
     } else if (response.status === 401) {
-      // Not logged in — clear state but no console error
       setUser(null);
     } else {
-      console.warn("Unexpected error in getUserProfile:", response.status);
+      console.warn("Unexpected response from /auth/me:", response.status);
       setUser(null);
     }
   } catch (err) {
-    console.error("Network error fetching user profile:", err);
+    console.debug("Silent fetch error for /auth/me:", err);
     setUser(null);
   } finally {
-    setTimeout(() => setLoading(false), 200);
+    setLoading(false);
   }
 };
+
 
 
   const handleAuthSuccess = () => {
