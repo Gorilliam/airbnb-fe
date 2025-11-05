@@ -33,16 +33,28 @@ export function UserProvider({ children }: PropsWithChildren) {
     getUserProfile();
   }, []);
 
-  const getUserProfile = async () => {
+const getUserProfile = async () => {
+  try {
     const response = await new AuthService().getUserProfile();
+
     if (response.ok) {
-      const profile: UserProfile | null = await response.json();
-      setUser(profile);
+      const userProfile: UserProfile = await response.json();
+      setUser(userProfile);
+    } else if (response.status === 401) {
+      // Not logged in — clear state but no console error
+      setUser(null);
     } else {
+      console.warn("Unexpected error in getUserProfile:", response.status);
       setUser(null);
     }
-    setLoading(false);
-  };
+  } catch (err) {
+    console.error("Network error fetching user profile:", err);
+    setUser(null);
+  } finally {
+    setTimeout(() => setLoading(false), 200);
+  }
+};
+
 
   const handleAuthSuccess = () => {
     getUserProfile();
@@ -66,11 +78,10 @@ export function UserProvider({ children }: PropsWithChildren) {
     }
   };
 
-const logout = async () => {
-  await new AuthService().logout();
-  setUser(null);
-};
-
+  const logout = async () => {
+    await new AuthService().logout?.();
+    setUser(null);
+  };
 
   return (
     <UserContext.Provider
