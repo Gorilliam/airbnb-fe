@@ -2,6 +2,7 @@
 
 import AuthService from "@/utils/authService";
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface UserState {
   user: UserProfile | null;
@@ -28,36 +29,36 @@ const UserContext = createContext<UserState>(initialState);
 export function UserProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<UserProfile | null>(initialState.user);
   const [loading, setLoading] = useState(initialState.loading);
+  const router = useRouter();
 
   useEffect(() => {
     getUserProfile();
   }, []);
 
-const getUserProfile = async () => {
-  try {
-    const response = await new AuthService().getUserProfile();
+  const getUserProfile = async () => {
+    try {
+      const response = await new AuthService().getUserProfile();
 
-    if (response.ok) {
-      const userProfile: UserProfile = await response.json();
-      setUser(userProfile);
-    } else if (response.status === 401) {
+      if (response.ok) {
+        const userProfile: UserProfile = await response.json();
+        setUser(userProfile);
+      } else if (response.status === 401) {
+        setUser(null);
+      } else {
+        console.warn("Unexpected error in getUserProfile:", response.status);
+        setUser(null);
+      }
+    } catch (err) {
+      console.error("Network error fetching user profile:", err);
       setUser(null);
-    } else {
-      console.warn("Unexpected response from /auth/me:", response.status);
-      setUser(null);
+    } finally {
+      setTimeout(() => setLoading(false), 200);
     }
-  } catch (err) {
-    console.debug("Silent fetch error for /auth/me:", err);
-    setUser(null);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-
-
-  const handleAuthSuccess = () => {
+  const handleAuthSuccess = (redirectTo: string = "/bookings") => {
     getUserProfile();
+    router.push(redirectTo);
   };
 
   const login = async (email: string, password: string) => {
@@ -81,6 +82,7 @@ const getUserProfile = async () => {
   const logout = async () => {
     await new AuthService().logout?.();
     setUser(null);
+    router.push("/login");
   };
 
   return (
@@ -99,3 +101,4 @@ const getUserProfile = async () => {
 export function useUser() {
   return useContext(UserContext);
 }
+
