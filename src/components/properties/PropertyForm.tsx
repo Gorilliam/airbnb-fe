@@ -21,15 +21,19 @@ export default function PropertyForm({
     availability: initialData.availability ?? true,
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  const { name, value, type } = e.target;
+  const checked =
+    type === "checkbox" && "checked" in e.target ? e.target.checked : undefined;
+
+  setForm({
+    ...form,
+    [name]: type === "checkbox" ? checked : value,
+  });
+};
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
