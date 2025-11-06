@@ -23,3 +23,24 @@ interface BookingListQuery {
   offset?: number;
   limit?: number;
 }
+
+
+interface BookingWithRelations {
+  id: string;
+  check_in_date: string;
+  check_out_date: string;
+  total_price: number;
+  created_at: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  property: {
+    id: string;
+    name: string;
+    location: string;
+    price_per_night: number;
+  };
+}
+
