@@ -2,83 +2,56 @@
 
 import { useState } from "react";
 
-interface BookingFormProps {
+export default function BookingForm({
+  onSubmit,
+  loading,
+  propertyId,
+}: {
   onSubmit: (data: NewBooking) => void;
   loading?: boolean;
-}
-
-export default function BookingForm({ onSubmit, loading }: BookingFormProps) {
-  const [form, setForm] = useState<NewBooking>({
-    property_id: "",
-    check_in_date: "",
-    check_out_date: "",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  propertyId: string;
+}) {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(form);
+    onSubmit({
+      property_id: propertyId,
+      check_in_date: checkIn,
+      check_out_date: checkOut,
+    });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md space-y-4"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Property ID
-        </label>
+        <label className="block mb-1">Check-in</label>
         <input
-          name="property_id"
-          type="text"
+          type="date"
           required
-          value={form.property_id}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md p-2"
-          placeholder="Enter property ID"
+          value={checkIn}
+          onChange={(e) => setCheckIn(e.target.value)}
+          className="w-full border p-2 rounded"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Check-in Date
-        </label>
+        <label className="block mb-1">Check-out</label>
         <input
-          name="check_in_date"
           type="date"
           required
-          value={form.check_in_date}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md p-2"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Check-out Date
-        </label>
-        <input
-          name="check_out_date"
-          type="date"
-          required
-          value={form.check_out_date}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md p-2"
+          value={checkOut}
+          onChange={(e) => setCheckOut(e.target.value)}
+          className="w-full border p-2 rounded"
         />
       </div>
 
       <button
-        type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition"
+        className="bg-blue-600 text-white px-4 py-2 rounded"
       >
-        {loading ? "Saving..." : "Create Booking"}
+        {loading ? "Creating..." : "Create Booking"}
       </button>
     </form>
   );
