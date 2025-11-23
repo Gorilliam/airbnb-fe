@@ -7,7 +7,7 @@ class BookingService {
       process.env.BACKEND_BASE_URL ||
       process.env.NEXT_PUBLIC_API_URL ||
       "";
-    this.bookingUrl = `${this.baseUrl}/booking`;
+    this.bookingUrl = `${this.baseUrl}/bookings`;
   }
 
   async getBookings(options: Partial<BookingListQuery> = {}) {
