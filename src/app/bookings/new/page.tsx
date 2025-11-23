@@ -1,16 +1,17 @@
 "use client";
 
 export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
 
-import { useSearchParams } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
 import { useState } from "react";
 
-export default function NewBookingPage() {
-  const searchParams = useSearchParams();
-  const propertyId = searchParams.get("property");
+export default function NewBookingPage({
+  searchParams,
+}: {
+  searchParams: { property?: string };
+}) {
+  const propertyId = searchParams.property;
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -31,8 +32,8 @@ export default function NewBookingPage() {
       const response = await new BookingService().createBooking(data);
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create booking");
+        const err = await response.json();
+        throw new Error(err.error || "Failed to create booking");
       }
 
       setMessage("✅ Booking successfully created!");
@@ -53,11 +54,7 @@ export default function NewBookingPage() {
         propertyId={propertyId}
       />
 
-      {message && (
-        <p className="mt-4 font-medium">
-          {message}
-        </p>
-      )}
+      {message && <p className="mt-4 font-medium">{message}</p>}
     </div>
   );
 }
