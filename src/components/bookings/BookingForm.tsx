@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 
-export default function BookingForm({
-  onSubmit,
-  loading,
-  propertyId,
-}: {
+interface BookingFormProps {
   onSubmit: (data: NewBooking) => void;
   loading?: boolean;
   propertyId: string;
-}) {
+}
+
+export default function BookingForm({ onSubmit, loading, propertyId }: BookingFormProps) {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     onSubmit({
       property_id: propertyId,
       check_in_date: checkIn,
@@ -25,8 +24,9 @@ export default function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+      
       <div>
-        <label className="block mb-1">Check-in</label>
+        <label className="block mb-1 font-medium">Check-in</label>
         <input
           type="date"
           required
@@ -37,7 +37,7 @@ export default function BookingForm({
       </div>
 
       <div>
-        <label className="block mb-1">Check-out</label>
+        <label className="block mb-1 font-medium">Check-out</label>
         <input
           type="date"
           required
@@ -49,7 +49,7 @@ export default function BookingForm({
 
       <button
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
       >
         {loading ? "Creating..." : "Create Booking"}
       </button>
