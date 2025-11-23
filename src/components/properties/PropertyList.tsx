@@ -18,7 +18,7 @@ export default function PropertyList() {
         }
 
         const result = await response.json();
-        setProperties(result.data || []);
+        setProperties(result || []);
       } catch (err) {
         console.error("Error fetching properties:", err);
       } finally {
@@ -34,23 +34,35 @@ export default function PropertyList() {
     return <p className="text-gray-500">No properties available.</p>;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">Properties</h1>
+
+        <Link
+          href="/bookings"
+          className="text-blue-600 underline font-medium"
+        >
+          My Bookings
+        </Link>
+      </div>
+
       {properties.map((p) => (
         <div
           key={p.id}
-          className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
+          className="p-5 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <h3 className="font-semibold text-lg text-gray-800">{p.name}</h3>
+              <h3 className="font-semibold text-lg text-gray-900">{p.name}</h3>
               <p className="text-gray-600">{p.location}</p>
               <p className="text-gray-800 font-medium">
-                ${p.price_per_night} / night
+                {p.price_per_night} €/night
               </p>
               <p className="text-sm text-gray-500 mt-1">
                 {p.availability ? "✅ Available" : "❌ Unavailable"}
               </p>
             </div>
+
             <Link
               href={`/properties/${p.id}/update`}
               className="text-blue-600 underline text-sm"
@@ -58,8 +70,27 @@ export default function PropertyList() {
               Edit
             </Link>
           </div>
+
+          <div className="mt-4">
+            {p.availability ? (
+              <Link
+                href={`/bookings/new?property=${p.id}`}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Book Property
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
+              >
+                Not Available
+              </button>
+            )}
+          </div>
         </div>
       ))}
     </div>
   );
 }
+

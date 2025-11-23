@@ -56,7 +56,7 @@ export function UserProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const handleAuthSuccess = (redirectTo: string = "/bookings") => {
+  const handleAuthSuccess = (redirectTo: string = "/properties") => {
     getUserProfile();
     router.push(redirectTo);
   };
