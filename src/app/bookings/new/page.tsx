@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 import { useSearchParams } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
