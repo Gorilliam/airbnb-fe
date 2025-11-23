@@ -2,19 +2,27 @@
 
 export const dynamic = "force-dynamic";
 
+import { useSearchParams } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function NewBookingPage({
-  searchParams,
-}: {
-  searchParams: { property?: string };
-}) {
-  const propertyId = searchParams.property;
+export default function NewBookingPage() {
+  const searchParams = useSearchParams();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const propertyId = mounted ? searchParams.get("property") : null;
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  if (!mounted) {
+    return <p>Loading...</p>;
+  }
 
   if (!propertyId) {
     return (
@@ -32,12 +40,12 @@ export default function NewBookingPage({
       const response = await new BookingService().createBooking(data);
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Failed to create booking");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create booking");
       }
 
       setMessage("✅ Booking successfully created!");
-    } catch (err) {
+    } catch {
       setMessage("❌ Failed to create booking");
     } finally {
       setLoading(false);
@@ -54,7 +62,11 @@ export default function NewBookingPage({
         propertyId={propertyId}
       />
 
-      {message && <p className="mt-4 font-medium">{message}</p>}
+      {message && (
+        <p className="mt-4 font-medium">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
