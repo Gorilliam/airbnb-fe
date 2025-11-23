@@ -6,12 +6,15 @@ import BookingForm from "./BookingForm";
 import { useSearchParams } from "next/navigation";
 
 export default function NewBooking() {
+  const searchParams = useSearchParams();
+  const propertyId = searchParams.get("property");
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // ⬅ Get ?property=<id> from URL
-  const searchParams = useSearchParams();
-  const propertyId = searchParams.get("property") || "";
+  if (!propertyId) {
+    return <p className="text-red-600">❌ No property selected.</p>;
+  }
 
   const handleCreateBooking = async (data: NewBooking) => {
     setLoading(true);
@@ -21,14 +24,19 @@ export default function NewBooking() {
       const response = await new BookingService().createBooking(data);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create booking");
+        const errorData: { error?: string } = await response.json();
+        throw new Error(errorData.error ?? "Could not create booking");
       }
 
       setMessage("✅ Booking created successfully!");
-    } catch (err: any) {
-      console.error("Error creating booking:", err);
-      setMessage(`❌ ${err.message}`);
+    } catch (err) {
+      let errorMessage = "Unknown error";
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
+      setMessage(`❌ ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -38,7 +46,6 @@ export default function NewBooking() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">New Booking</h1>
 
-      {/* ⬅ PASS propertyId TO FORM */}
       <BookingForm
         onSubmit={handleCreateBooking}
         loading={loading}
