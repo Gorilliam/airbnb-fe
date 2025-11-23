@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useSearchParams } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
