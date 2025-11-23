@@ -9,6 +9,7 @@ export default function PropertyList() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
+  //To get user info for conditional rendering
   const { user } = useUser();
 
   useEffect(() => {
