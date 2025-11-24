@@ -1,20 +1,22 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
-import { useEffect, useState } from "react";
 
 export default function NewBookingPage() {
-  const searchParams = useSearchParams();
   const [propertyId, setPropertyId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setPropertyId(searchParams.get("property"));
-  }, [searchParams]);
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Extract query param manually on the client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("property");
+      setPropertyId(id);
+    }
+  }, []);
 
   if (!propertyId) {
     return (
@@ -37,7 +39,7 @@ export default function NewBookingPage() {
       }
 
       setMessage("✅ Booking successfully created!");
-    } catch {
+    } catch (err) {
       setMessage("❌ Failed to create booking");
     } finally {
       setLoading(false);
