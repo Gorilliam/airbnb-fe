@@ -1,8 +1,6 @@
 "use client";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
 
 import { useSearchParams } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
@@ -11,16 +9,14 @@ import { useEffect, useState } from "react";
 
 export default function NewBookingPage() {
   const searchParams = useSearchParams();
+  const [propertyId, setPropertyId] = useState<string | null>(null);
 
-  // Avoid SSR mismatch
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setPropertyId(searchParams.get("property"));
+  }, [searchParams]);
 
-  if (!mounted) {
-    return <p>Loading...</p>;
-  }
-
-  const propertyId = searchParams.get("property");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   if (!propertyId) {
     return (
@@ -30,9 +26,6 @@ export default function NewBookingPage() {
     );
   }
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
   async function handleCreateBooking(data: NewBooking) {
     setLoading(true);
     setMessage("");
@@ -41,12 +34,12 @@ export default function NewBookingPage() {
       const response = await new BookingService().createBooking(data);
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Failed to create booking");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create booking");
       }
 
       setMessage("✅ Booking successfully created!");
-    } catch (err) {
+    } catch {
       setMessage("❌ Failed to create booking");
     } finally {
       setLoading(false);
