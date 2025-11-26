@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
 
 export default function NewBookingPage() {
+  const router = useRouter();
   const [propertyId, setPropertyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -39,6 +41,8 @@ export default function NewBookingPage() {
       }
 
       setMessage("✅ Booking successfully created!");
+
+      setTimeout(() => router.push("/bookings"), 1000);
     } catch (err) {
       console.error(err);
       setMessage("❌ Failed to create booking");
