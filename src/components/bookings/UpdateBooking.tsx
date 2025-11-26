@@ -11,6 +11,7 @@ export default function UpdateBooking({ booking }: { booking: Booking }) {
 
   async function handleSave() {
     const response = await new BookingService().updateBooking(booking.id, {
+      property_id: booking.property_id,
       check_in_date: checkIn,
       check_out_date: checkOut,
     });
@@ -24,6 +25,7 @@ export default function UpdateBooking({ booking }: { booking: Booking }) {
 
   async function handleDelete() {
     if (!confirm("Delete this booking?")) return;
+
     const res = await new BookingService().deleteBooking(booking.id);
     if (res.ok) {
       router.push("/bookings");
@@ -42,6 +44,7 @@ export default function UpdateBooking({ booking }: { booking: Booking }) {
         onChange={(e) => setCheckIn(e.target.value)}
         className="border p-2 w-full rounded mb-2"
       />
+
       <input
         type="date"
         value={checkOut}
