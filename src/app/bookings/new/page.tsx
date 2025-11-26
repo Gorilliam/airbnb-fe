@@ -1,20 +1,22 @@
 "use client";
 
-console.log("⭐ NEW BOOKING PAGE LOADED");
-
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import BookingService from "@/utils/bookingService";
+import { useEffect, useState } from "react";
 import BookingForm from "@/components/bookings/BookingForm";
+import BookingService from "@/utils/bookingService";
 
 export default function NewBookingPage() {
-  console.log("⭐ COMPONENT RENDERED");
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const propertyId = searchParams.get("property"); // THIS WORKS
-
+  const [propertyId, setPropertyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Extract query param manually (100% client-side)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("property");
+      setPropertyId(id);
+    }
+  }, []);
 
   if (!propertyId) {
     return (
@@ -26,21 +28,20 @@ export default function NewBookingPage() {
 
   async function handleCreateBooking(data: NewBooking) {
     setLoading(true);
-
     try {
       const response = await new BookingService().createBooking(data);
 
-      console.log("POST SENT:", data); // <-- you will now SEE THIS
+      console.log("POST SENT:", data);
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || "Failed to create booking");
       }
 
-      router.push("/bookings");
+      setMessage("✅ Booking successfully created!");
     } catch (err) {
       console.error(err);
-      alert("❌ Failed to create booking");
+      setMessage("❌ Failed to create booking");
     } finally {
       setLoading(false);
     }
@@ -55,6 +56,12 @@ export default function NewBookingPage() {
         loading={loading}
         propertyId={propertyId}
       />
+
+      {message && (
+        <p className="mt-4 font-semibold">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
