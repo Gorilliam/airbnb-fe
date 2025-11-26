@@ -8,7 +8,6 @@ import { useUser } from "@/contexts/user";
 export default function PropertyList() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-
   const { user } = useUser();
 
   useEffect(() => {
@@ -31,18 +30,6 @@ export default function PropertyList() {
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
-
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Properties</h1>
-
-        <Link
-          href="/bookings"
-          className="text-blue-600 underline font-medium"
-        >
-          My Bookings
-        </Link>
-      </div>
-
       {properties.map((p) => {
         const canEdit =
           user?.role === "admin" ||
@@ -96,7 +83,6 @@ export default function PropertyList() {
           </div>
         );
       })}
-
     </div>
   );
 }
