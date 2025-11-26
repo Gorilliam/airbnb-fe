@@ -31,6 +31,7 @@ class BookingService {
 
   async createBooking(bookingData: Partial<Booking>) {
     const url = `${this.bookingUrl}/`;
+    console.log("POST URL:", url);
     return await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
