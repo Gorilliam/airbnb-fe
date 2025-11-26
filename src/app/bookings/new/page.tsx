@@ -1,22 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import BookingForm from "@/components/bookings/BookingForm";
+console.log("⭐ NEW BOOKING PAGE LOADED");
+
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import BookingService from "@/utils/bookingService";
+import BookingForm from "@/components/bookings/BookingForm";
 
 export default function NewBookingPage() {
-  const [propertyId, setPropertyId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  console.log("⭐ COMPONENT RENDERED");
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Extract query param manually on the client
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("property");
-      setPropertyId(id);
-    }
-  }, []);
+  const propertyId = searchParams.get("property"); // THIS WORKS
+
+  const [loading, setLoading] = useState(false);
 
   if (!propertyId) {
     return (
@@ -28,19 +26,21 @@ export default function NewBookingPage() {
 
   async function handleCreateBooking(data: NewBooking) {
     setLoading(true);
-    setMessage("");
 
     try {
       const response = await new BookingService().createBooking(data);
+
+      console.log("POST SENT:", data); // <-- you will now SEE THIS
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || "Failed to create booking");
       }
 
-      setMessage("✅ Booking successfully created!");
+      router.push("/bookings");
     } catch (err) {
-      setMessage("❌ Failed to create booking");
+      console.error(err);
+      alert("❌ Failed to create booking");
     } finally {
       setLoading(false);
     }
@@ -55,8 +55,6 @@ export default function NewBookingPage() {
         loading={loading}
         propertyId={propertyId}
       />
-
-      {message && <p className="mt-4 font-medium">{message}</p>}
     </div>
   );
 }
