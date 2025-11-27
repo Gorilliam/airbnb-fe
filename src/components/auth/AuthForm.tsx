@@ -9,13 +9,14 @@ export default function AuthForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [mode, setMode] = useState<"login" | "register">("login");
 
   const onSubmit = async () => {
     if (mode === "login") {
       await user.actions.login(email, password);
     } else {
-      await user.actions.register(email, password);
+      await user.actions.register(email, password, name);
     }
   };
 
@@ -32,6 +33,17 @@ export default function AuthForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
+
+      {mode === "register" && (
+        <InputWLabel
+          label="Name"
+          type="text"
+          placeholder="Your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      )}
+
       <InputWLabel
         label="Password"
         type="password"
