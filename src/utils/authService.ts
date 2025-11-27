@@ -20,13 +20,13 @@ class AuthService {
     });
   }
 
-  async register(email: string, password: string) {
+  async register(email: string, password: string, name: string) {
     const url = `${this.authUrl}/register`;
     return await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, name }),
     });
   }
 

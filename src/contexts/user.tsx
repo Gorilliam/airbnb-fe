@@ -9,7 +9,7 @@ interface UserState {
   loading: boolean;
   actions: {
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string) => Promise<void>;
+    register: (email: string, password: string, name: string) => Promise<void>;
     logout: () => Promise<void>;
   };
 }
@@ -70,8 +70,8 @@ export function UserProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const register = async (email: string, password: string) => {
-    const response = await new AuthService().register(email, password);
+  const register = async (email: string, password: string, name: string) => {
+    const response = await new AuthService().register(email, password, name);
     if (response.ok) {
       handleAuthSuccess();
     } else {
