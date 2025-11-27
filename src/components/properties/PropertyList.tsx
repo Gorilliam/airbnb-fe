@@ -49,7 +49,7 @@ export default function PropertyList() {
                 </p>
 
                 <p className="text-sm mt-1">
-                  {p.availability ? "✅ Available" : "❌ Unavailable"}
+                  {p.availability ? "✅ Available" : "❌ Already booked"}
                 </p>
               </div>
 
