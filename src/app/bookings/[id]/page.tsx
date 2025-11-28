@@ -34,6 +34,7 @@ export default function BookingDetailPage() {
         }
 
         const data: BookingWithRelations = await res.json();
+        console.log("Booking data:", data);
         setBooking(data);
       } catch (err) {
         console.error("Error fetching booking:", err);
@@ -69,7 +70,6 @@ export default function BookingDetailPage() {
       <div className="bg-white shadow p-6 rounded-lg">
         <h1 className="text-3xl font-bold mb-6">Booking Details</h1>
 
-        {/* Property Info */}
         <h2 className="text-xl font-semibold">{booking.property.name}</h2>
         <p className="text-gray-600">📍 {booking.property.location}</p>
 
@@ -88,7 +88,6 @@ export default function BookingDetailPage() {
           Total Price: {booking.total_price} €
         </p>
 
-        {/* Guest */}
         <p className="mt-4 text-gray-700">
           Guest: {booking.user.name} ({booking.user.email})
         </p>
