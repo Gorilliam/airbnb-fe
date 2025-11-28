@@ -1,7 +1,6 @@
-"use client";
-
 import PropertyService from "@/utils/propertyService";
 import { notFound } from "next/navigation";
+import PropertyActions from "@/components/properties/PropertyActions";
 
 export default async function PropertyDetailPage({
   params,
@@ -38,6 +37,8 @@ export default async function PropertyDetailPage({
         <p className={isAvailable ? "text-green-600" : "text-red-600"}>
           {isAvailable ? "Available" : "Unavailable"}
         </p>
+
+        <PropertyActions property={property} />
       </div>
     </div>
   );
