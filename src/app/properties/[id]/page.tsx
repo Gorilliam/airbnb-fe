@@ -1,3 +1,5 @@
+"use client";
+
 import PropertyService from "@/utils/propertyService";
 import { notFound } from "next/navigation";
 
