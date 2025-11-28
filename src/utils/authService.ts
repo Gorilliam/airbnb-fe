@@ -46,6 +46,17 @@ class AuthService {
       credentials: "include",
     });
   }
+
+  async updateProfile(data: Partial<UserProfile> & { toggleRole?: boolean }) {
+  const url = `${this.authUrl}/me`;
+  return await fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+}
+
 }
 
 export default AuthService;

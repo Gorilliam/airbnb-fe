@@ -11,6 +11,10 @@ interface UserState {
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, name: string) => Promise<void>;
     logout: () => Promise<void>;
+    updateProfile: (
+  data: Partial<UserProfile> & { toggleRole?: boolean }
+) => Promise<boolean>;
+
   };
 }
 
@@ -21,6 +25,7 @@ const initialState: UserState = {
     login: async () => {},
     register: async () => {},
     logout: async () => {},
+    updateProfile: async () => false,
   },
 };
 
@@ -80,17 +85,30 @@ export function UserProvider({ children }: PropsWithChildren) {
   };
 
   const logout = async () => {
-    await new AuthService().logout?.();
+    await new AuthService().logout();
     setUser(null);
     router.push("/login");
   };
+
+  const updateProfile = async (data: Partial<UserProfile> & { toggleRole?: boolean }) => {
+  const response = await new AuthService().updateProfile(data);
+
+  if (response.ok) {
+    await getUserProfile();
+    return true;
+  } else {
+    console.warn("Failed to update profile", await response.json());
+    return false;
+  }
+};
+
 
   return (
     <UserContext.Provider
       value={{
         user,
         loading,
-        actions: { login, register, logout },
+        actions: { login, register, logout, updateProfile },
       }}
     >
       {children}
