@@ -28,6 +28,12 @@ export default function UpdateProperty({ property }: { property: Property }) {
     if (res.ok) {
       router.push("/properties");
     } else {
+      try {
+        const data = await res.json();
+        alert(data.error ?? "Failed to update property");
+      } catch (error) {
+        alert("Failed to update property");
+      }
       alert("Failed to update property");
     }
   }
@@ -38,7 +44,12 @@ export default function UpdateProperty({ property }: { property: Property }) {
     if (res.ok) {
       router.push("/properties");
     } else {
-      alert("Failed to delete property");
+      try {
+        const data = await res.json();
+        alert(data.error ?? "Failed to delete property");
+      } catch (error) {
+        alert("Failed to delete property");
+      }
     }
   }
 
