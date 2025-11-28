@@ -2,12 +2,10 @@
 
 import PropertyList from "@/components/properties/PropertyList";
 import { useUser } from "@/contexts/user";
-import { redirect } from "next/navigation";
 
 export default function PropertiesPage() {
-  const { user, loading } = useUser();
+  const { loading } = useUser();
 
-  // ❗ Do NOT redirect while loading
   if (loading) {
     return (
       <div className="p-10 text-center text-gray-600">
@@ -16,10 +14,6 @@ export default function PropertiesPage() {
     );
   }
 
-  // After loading finishes → user still null → redirect
-  if (!user) {
-    redirect("/");
-  }
 
   return (
     <div className="p-10">
