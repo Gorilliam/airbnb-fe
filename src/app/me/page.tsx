@@ -1,84 +1,84 @@
 "use client";
 
+import { useUser } from "@/contexts/user";
 import { useEffect, useState } from "react";
-import AuthService from "@/utils/authService";
 
 export default function MePage() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, actions } = useUser();
+
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    async function loadProfile() {
-      try {
-        const response = await new AuthService().getUserProfile();
-        const data: UserProfile | { error: string } = await response.json();
-
-        if ("error" in data) {
-          setUser(null);
-        } else {
-          setUser(data);
-        }
-      } finally {
-        setLoading(false);
-      }
+    if (user) {
+      setName(user.name ?? "");
+      setBio(user.bio ?? "");
+      setAvatarUrl(user.avatar_url ?? "");
     }
+  }, [user]);
 
-    loadProfile();
-  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p>You must be logged in.</p>;
 
-  if (loading) {
-    return (
-      <div className="p-10">
-        <h1 className="text-2xl font-bold">My Profile</h1>
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  const saveProfile = async () => {
+    const success = await actions.updateProfile({
+      name,
+      bio,
+      avatar_url: avatarUrl,
+    });
 
-  if (!user) {
-    return (
-      <div className="p-10">
-        <h1 className="text-2xl font-bold">My Profile</h1>
-        <p className="text-red-600">Failed to load profile.</p>
-      </div>
-    );
-  }
+    if (success) alert("Profile updated!");
+  };
+
+  const toggleRole = async () => {
+    const success = await actions.updateProfile({ toggleRole: true });
+    if (success) alert("Role changed!");
+  };
 
   return (
-    <div className="p-10 space-y-4">
-      <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+    <div style={{ maxWidth: 600, margin: "2rem auto" }}>
+      <h1>My Profile</h1>
 
-      <div className="space-y-3 text-lg">
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Role:</strong> {user.role}</p>
+      <p><strong>Joined:</strong> {new Date(user.created_at).toDateString()}</p>
 
-        {user.avatar_url && (
-          <img
-            src={user.avatar_url}
-            alt="Avatar"
-            className="w-24 h-24 rounded-full border"
-          />
-        )}
+      <hr />
 
-        {user.bio && (
-          <p><strong>Bio:</strong> {user.bio}</p>
-        )}
+      <h2>Edit Profile</h2>
 
-        <p>
-          <strong>Role:</strong>{" "}
-          <span className={
-            user.role === "admin"
-              ? "text-purple-600 font-semibold"
-              : user.role === "host"
-              ? "text-blue-600 font-semibold"
-              : "text-gray-800"
-          }>
-            {user.role}
-          </span>
-        </p>
+      <label>Name</label>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
-        <p><strong>Joined:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
-      </div>
+      <label>Bio</label>
+      <textarea
+        value={bio}
+        onChange={(e) => setBio(e.target.value)}
+      />
+
+      <label>Avatar URL</label>
+      <input
+        value={avatarUrl}
+        onChange={(e) => setAvatarUrl(e.target.value)}
+      />
+
+      <button onClick={saveProfile}>Save Changes</button>
+
+      <hr />
+
+      {user.role !== "admin" && (
+        <>
+          <h2>Role Switch</h2>
+
+          <button onClick={toggleRole}>
+            Switch to {user.role === "guest" ? "host" : "guest"}
+          </button>
+        </>
+      )}
     </div>
   );
 }
