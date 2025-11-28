@@ -1,31 +1,34 @@
+// src/app/bookings/[id]/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BookingService from "@/utils/bookingService";
+import PropertyService from "@/utils/propertyService";
 import BookingActions from "@/components/bookings/BookingActions";
 
 export default function BookingDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [booking, setBooking] = useState<BookingWithRelations | null>(null);
+  const [booking, setBooking] = useState<Booking | null>(null);
+  const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       if (!id || typeof id !== "string") {
-        console.error("Missing booking id:", id);
+        console.error("No id in route params:", id);
         setError("Invalid booking id");
         setLoading(false);
         return;
       }
 
       try {
-        const service = new BookingService();
-        const res = await service.getBooking(id);
+        const bookingService = new BookingService();
+        const res = await bookingService.getBooking(id);
 
-        console.log("GET /bookings/:id ->", res.status);
+        console.log("GET /bookings/:id -> status", res.status);
 
         if (!res.ok) {
           setError("Booking not found");
@@ -33,11 +36,20 @@ export default function BookingDetailPage() {
           return;
         }
 
-        const data: BookingWithRelations = await res.json();
+        const data: Booking = await res.json();
         console.log("Booking data:", data);
         setBooking(data);
-      } catch (err) {
-        console.error("Error fetching booking:", err);
+
+        // Fetch related property so we can show a nice card
+        const propertyService = new PropertyService();
+        const propRes = await propertyService.getProperty(data.property_id);
+
+        if (propRes.ok) {
+          const prop: Property = await propRes.json();
+          setProperty(prop);
+        }
+      } catch (e) {
+        console.error("Error fetching booking:", e);
         setError("Failed to load booking");
       } finally {
         setLoading(false);
@@ -65,34 +77,39 @@ export default function BookingDetailPage() {
     );
   }
 
+  const checkIn = new Date(booking.check_in_date).toLocaleDateString();
+  const checkOut = new Date(booking.check_out_date).toLocaleDateString();
+
   return (
     <div className="p-10 max-w-2xl mx-auto">
       <div className="bg-white shadow p-6 rounded-lg">
-        <h1 className="text-3xl font-bold mb-6">Booking Details</h1>
+        <h1 className="text-3xl font-bold mb-4">Booking Details</h1>
 
-        <h2 className="text-xl font-semibold">{booking.property.name}</h2>
-        <p className="text-gray-600">📍 {booking.property.location}</p>
+        {/* Property info if we managed to load it */}
+        {property && (
+          <>
+            <p className="text-xl font-semibold mb-1">{property.name}</p>
+            <p className="text-gray-600 mb-4">📍 {property.location}</p>
+            <p className="mb-2">
+              Price per night: {property.price_per_night} €
+            </p>
+          </>
+        )}
 
-        <div className="mt-4">
-          <p>
-            <span className="font-semibold">Check-in:</span>{" "}
-            {new Date(booking.check_in_date).toLocaleDateString()}
-          </p>
-          <p>
-            <span className="font-semibold">Check-out:</span>{" "}
-            {new Date(booking.check_out_date).toLocaleDateString()}
-          </p>
-        </div>
-
-        <p className="text-xl font-semibold mt-4">
-          Total Price: {booking.total_price} €
+        {/* Dates */}
+        <p className="mb-1">
+          Check-in: <span className="font-medium">{checkIn}</span>
+        </p>
+        <p className="mb-4">
+          Check-out: <span className="font-medium">{checkOut}</span>
         </p>
 
-        <p className="mt-4 text-gray-700">
-          Guest: {booking.user.name} ({booking.user.email})
+        {/* Total price */}
+        <p className="text-xl font-semibold mb-4">
+          Total price: {booking.total_price} €
         </p>
 
-        {/* Owner/Admin Actions */}
+        {/* Owner/admin actions */}
         <BookingActions booking={booking} />
       </div>
     </div>

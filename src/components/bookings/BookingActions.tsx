@@ -1,18 +1,15 @@
 "use client";
 
-import { useUser } from "@/contexts/user";
 import Link from "next/link";
+import { useUser } from "@/contexts/user";
 
-export default function BookingActions({
-  booking,
-}: {
-  booking: BookingWithRelations;
-}) {
+export default function BookingActions({ booking }: { booking: Booking }) {
   const { user } = useUser();
 
   if (!user) return null;
 
-  const isOwner = user.user_id === booking.user.id || user.role === "admin";
+  const isOwner =
+    user.user_id === booking.user_id || user.role === "admin";
 
   if (!isOwner) return null;
 
