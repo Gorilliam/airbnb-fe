@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useUser } from "@/contexts/user";
 import { usePathname } from "next/navigation";
 
-
 export default function NavBar() {
-  const { user, actions } = useUser();
+  const { user, loading, actions } = useUser();
   const pathname = usePathname();
 
+  const isHome = pathname === "/";
 
   return (
     <nav className="w-full bg-gray-100 px-6 py-4 flex justify-between items-center border-b">
@@ -38,7 +38,9 @@ export default function NavBar() {
       </div>
 
       <div>
-         {!user && pathname !== "/" && (
+        {loading && <span className="text-gray-500">Loading…</span>}
+
+        {!loading && !user && !isHome && (
           <Link
             href="/"
             className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -46,7 +48,8 @@ export default function NavBar() {
             Login
           </Link>
         )}
-        {user ? (
+
+        {!loading && user && (
           <>
             <span className="text-sm text-gray-600">
               Logged in as {user.email}
@@ -59,7 +62,7 @@ export default function NavBar() {
               Logout
             </button>
           </>
-        ) : null}
+        )}
       </div>
     </nav>
   );
