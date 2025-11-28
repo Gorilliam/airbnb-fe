@@ -18,8 +18,8 @@ export default function MePage() {
     }
   }, [user]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!user) return <p>You must be logged in.</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (!user) return <p className="text-center mt-10">You must be logged in.</p>;
 
   const saveProfile = async () => {
     const success = await actions.updateProfile({
@@ -37,44 +37,71 @@ export default function MePage() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "2rem auto" }}>
-      <h1>My Profile</h1>
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">My Profile</h1>
 
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Role:</strong> {user.role}</p>
-      <p><strong>Joined:</strong> {new Date(user.created_at).toDateString()}</p>
+      {/* Profile Info */}
+      <div className="space-y-1 mb-6">
+        <p><span className="font-semibold">Email:</span> {user.email}</p>
+        <p><span className="font-semibold">Role:</span> {user.role}</p>
+        <p>
+          <span className="font-semibold">Joined:</span>{" "}
+          {new Date(user.created_at).toDateString()}
+        </p>
+      </div>
 
-      <hr />
+      <hr className="my-6" />
 
-      <h2>Edit Profile</h2>
+      {/* Edit Section */}
+      <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
 
-      <label>Name</label>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <div className="space-y-4">
+        <div>
+          <label className="block mb-1 font-medium">Name</label>
+          <input
+            className="w-full border rounded px-3 py-2"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
 
-      <label>Bio</label>
-      <textarea
-        value={bio}
-        onChange={(e) => setBio(e.target.value)}
-      />
+        <div>
+          <label className="block mb-1 font-medium">Bio</label>
+          <textarea
+            className="w-full border rounded px-3 py-2"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+        </div>
 
-      <label>Avatar URL</label>
-      <input
-        value={avatarUrl}
-        onChange={(e) => setAvatarUrl(e.target.value)}
-      />
+        <div>
+          <label className="block mb-1 font-medium">Avatar URL</label>
+          <input
+            className="w-full border rounded px-3 py-2"
+            value={avatarUrl}
+            onChange={(e) => setAvatarUrl(e.target.value)}
+          />
+        </div>
 
-      <button onClick={saveProfile}>Save Changes</button>
+        <button
+          onClick={saveProfile}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded mt-3"
+        >
+          Save Changes
+        </button>
+      </div>
 
-      <hr />
+      <hr className="my-6" />
 
+      {/* Role Switch */}
       {user.role !== "admin" && (
         <>
-          <h2>Role Switch</h2>
+          <h2 className="text-xl font-semibold mb-2">Role Switch</h2>
 
-          <button onClick={toggleRole}>
+          <button
+            onClick={toggleRole}
+            className="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded"
+          >
             Switch to {user.role === "guest" ? "host" : "guest"}
           </button>
         </>
