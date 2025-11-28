@@ -13,14 +13,7 @@ export default function PropertiesPage() {
         <h1 className="text-2xl font-bold">Properties</h1>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="/bookings"
-            className="text-blue-600 underline font-medium"
-          >
-            My Bookings
-          </Link>
-
-          {/* Only hosts & admins can add properties */}
+                  {/* Only hosts & admins can add properties */}
           {(user?.role === "host" || user?.role === "admin") && (
             <Link
               href="/properties/new"
@@ -29,6 +22,15 @@ export default function PropertiesPage() {
               + Add Property
             </Link>
           )}
+         
+          <Link
+            href="/bookings"
+            className="text-blue-600 underline font-medium"
+          >
+            My Bookings
+          </Link>
+
+ 
         </div>
       </div>
 
