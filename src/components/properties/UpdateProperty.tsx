@@ -34,7 +34,6 @@ export default function UpdateProperty({ property }: { property: Property }) {
       } catch (error) {
         alert("Failed to update property");
       }
-      alert("Failed to update property");
     }
   }
 
