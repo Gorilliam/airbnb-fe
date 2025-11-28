@@ -87,7 +87,7 @@ export function UserProvider({ children }: PropsWithChildren) {
   const logout = async () => {
     await new AuthService().logout();
     setUser(null);
-    router.push("/login");
+    router.push("/");
   };
 
   const updateProfile = async (data: Partial<UserProfile> & { toggleRole?: boolean }) => {
@@ -119,4 +119,3 @@ export function UserProvider({ children }: PropsWithChildren) {
 export function useUser() {
   return useContext(UserContext);
 }
-

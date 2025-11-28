@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useUser } from "@/contexts/user";
 
 export default function NavBar() {
-  const { user } = useUser();
+  const { user, actions } = useUser();
 
   return (
     <nav className="w-full bg-gray-100 px-6 py-4 flex justify-between items-center border-b">
@@ -34,13 +34,20 @@ export default function NavBar() {
       </div>
 
       <div>
-        {!user ? (
-          <Link href="/auth/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        ) : (
-          <span className="text-gray-600">Logged in as {user.email}</span>
-        )}
+        {user ? (
+          <>
+            <span className="text-sm text-gray-600">
+              Logged in as {user.email}
+            </span>
+
+            <button
+              onClick={actions.logout}
+              className="text-red-600 hover:text-red-800 font-medium"
+            >
+              Logout
+            </button>
+          </>
+        ) : null}
       </div>
     </nav>
   );
