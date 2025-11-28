@@ -1,8 +1,15 @@
 "use client";
 
 import PropertyList from "@/components/properties/PropertyList";
+import { useUser } from "@/contexts/user";
+import { redirect } from "next/navigation";
 
 export default function PropertiesPage() {
+  const {user, loading} = useUser();
+
+  if (!loading && !user) {
+    redirect("/");
+  }
 
   return (
     <div className="p-10">

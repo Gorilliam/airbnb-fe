@@ -4,8 +4,16 @@ import { useEffect, useState } from "react";
 import PropertyForm from "@/components/properties/PropertyForm";
 import PropertyService from "@/utils/propertyService";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/user";
+import { redirect } from "next/navigation";
 
 export default function NewPropertyPage() {
+  const {user, loading} = useUser();
+
+  if (!loading && !user) {
+    redirect("/");
+  }
+
   const router = useRouter();
   const [template, setTemplate] = useState<string | null>(null);
 
@@ -17,7 +25,7 @@ export default function NewPropertyPage() {
     }
   }, []);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   async function handleCreateProperty(data: NewProperty) {
@@ -49,7 +57,7 @@ export default function NewPropertyPage() {
 
       <PropertyForm
         onSubmit={handleCreateProperty}
-        loading={loading}
+        loading={isLoading}
         initialData={template === "luxury" ? (
           {
             name: "Luxury Suite",

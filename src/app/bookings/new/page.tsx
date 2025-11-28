@@ -4,14 +4,21 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
+import { useUser } from "@/contexts/user";
+import { redirect } from "next/navigation";
 
 export default function NewBookingPage() {
+  const {user, loading} = useUser();
+
+  if (!loading && !user) {
+    redirect("/");
+  }
+
   const router = useRouter();
   const [propertyId, setPropertyId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Extract query param manually (100% client-side)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -57,7 +64,7 @@ export default function NewBookingPage() {
 
       <BookingForm
         onSubmit={handleCreateBooking}
-        loading={loading}
+        loading={isLoading}
         propertyId={propertyId}
       />
 

@@ -1,10 +1,15 @@
 "use client";
 
 import { useUser } from "@/contexts/user";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MePage() {
   const { user, loading, actions } = useUser();
+
+  if (!loading && !user) {
+    redirect("/");
+  }
 
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -18,8 +23,9 @@ export default function MePage() {
     }
   }, [user]);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
-  if (!user) return <p className="text-center mt-10">You must be logged in.</p>;
+  if (loading || !user) {
+    return <p className="text-center mt-10">Loading...</p>;
+  }
 
   const saveProfile = async () => {
     const success = await actions.updateProfile({
@@ -40,7 +46,6 @@ export default function MePage() {
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
       <h1 className="text-2xl font-bold mb-4">My Profile</h1>
 
-      {/* Profile Info */}
       <div className="space-y-1 mb-6">
         <p><span className="font-semibold">Email:</span> {user.email}</p>
         <p><span className="font-semibold">Role:</span> {user.role}</p>
@@ -52,7 +57,6 @@ export default function MePage() {
 
       <hr className="my-6" />
 
-      {/* Edit Section */}
       <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
 
       <div className="space-y-4">
@@ -93,7 +97,6 @@ export default function MePage() {
 
       <hr className="my-6" />
 
-      {/* Role Switch */}
       {user.role !== "admin" && (
         <>
           <h2 className="text-xl font-semibold mb-2">Role Switch</h2>
