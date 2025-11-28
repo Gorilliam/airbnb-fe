@@ -1,70 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import PropertyForm from "@/components/properties/PropertyForm";
 import PropertyService from "@/utils/propertyService";
 import { useRouter } from "next/navigation";
 
 export default function NewPropertyPage() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState<number>(0);
   const router = useRouter();
+  const [template, setTemplate] = useState<string | null>(null);
 
-  async function handleSubmit() {
-    const response = await new PropertyService().createProperty({
-      name,
-      description,
-      location,
-      price_per_night: price,
-      availability: true,
-    });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const t = params.get("template");
+      setTemplate(t);
+    }
+  }, []);
 
-    if (response.ok) {
-      router.push("/properties");
-    } else {
-      alert("Failed to create property");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function handleCreateProperty(data: NewProperty) {
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const response = await new PropertyService().createProperty(data);
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Failed to create property");
+      }
+
+      setMessage("✅ Property created successfully!");
+
+      setTimeout(() => router.push("/properties"), 1000);
+    } catch (err: any) {
+      console.error(err);
+      setMessage(`❌ ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="p-10">
-      <h1 className="text-2xl font-bold mb-4">Add New Property</h1>
+    <div className="p-10 max-w-lg">
+      <h1 className="text-2xl font-bold mb-4">New Property</h1>
 
-      <div className="space-y-2">
-        <input
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <input
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-        <input
-          type="number"
-          placeholder="Price per night"
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
-          className="border p-2 w-full rounded"
-        />
+      <PropertyForm
+        onSubmit={handleCreateProperty}
+        loading={loading}
+        initialData={template === "luxury" ? (
+          {
+            name: "Luxury Suite",
+            location: "Monaco",
+            price_per_night: 999,
+            description: "An exclusive luxury suite."
+          }
+        ) : {}}/>
 
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Save
-        </button>
-      </div>
+      {message && <p className="mt-4">{message}</p>}
     </div>
   );
 }
