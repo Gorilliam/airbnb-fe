@@ -25,22 +25,16 @@ interface BookingListQuery {
 }
 
 
-interface BookingWithRelations {
-  id: string;
-  check_in_date: string;
-  check_out_date: string;
-  total_price: number;
-  created_at: string;
+interface BookingWithRelations extends Booking {
   user: {
     id: string;
     name: string;
     email: string;
-  };
+  } | null;
   property: {
     id: string;
     name: string;
     location: string;
     price_per_night: number;
-  };
+  } | null;
 }
-
