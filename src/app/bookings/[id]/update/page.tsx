@@ -1,5 +1,5 @@
 import BookingService from "@/utils/bookingService";
-import UpdateBooking from "@/components/bookings/UpdateBooking";
+import UpdateBookingClient from "@/components/bookings/UpdateBookingClient";
 import { notFound } from "next/navigation";
 
 export default async function UpdateBookingPage({
@@ -8,11 +8,9 @@ export default async function UpdateBookingPage({
   const { id } = await params;
   const response = await new BookingService().getBooking(id);
 
-  if (!response.ok) {
-    return notFound();
-  }
+  if (!response.ok) return notFound();
 
   const booking: Booking = await response.json();
 
-  return <UpdateBooking booking={booking} />;
+  return <UpdateBookingClient booking={booking} />;
 }
