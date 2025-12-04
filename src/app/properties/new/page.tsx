@@ -10,8 +10,14 @@ import { redirect } from "next/navigation";
 export default function NewPropertyPage() {
   const {user, loading} = useUser();
 
-  if (!loading && !user) {
-    redirect("/");
+  if (!loading) {
+    if (!user) {
+      redirect("/");
+    }
+
+    if (user.role !== "host" && user.role !== "admin") {
+      redirect("/properties");
+    }
   }
 
   const router = useRouter();
