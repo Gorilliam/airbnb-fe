@@ -62,22 +62,25 @@ export default function PropertyList() {
                 </Link>
               )}
             </div>
-
             <div className="mt-4">
-              {p.availability ? (
-                <Link
-                  href={`/bookings/new?property=${p.id}`}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                >
-                  Book Property
-                </Link>
-              ) : (
-                <button
-                  disabled
-                  className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
-                >
-                  Unavailable
-                </button>
+              {user && (
+                <>
+                  {p.availability ? (
+                    <Link
+                      href={`/bookings/new?property=${p.id}`}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      Book Property
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="px-4 py-2 bg-gray-400 text-white rounded"
+                    >
+                      Unavailable
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
