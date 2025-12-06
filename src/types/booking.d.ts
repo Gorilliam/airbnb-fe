@@ -43,4 +43,3 @@ interface BookingWithRelations {
     price_per_night: number;
   };
 }
-

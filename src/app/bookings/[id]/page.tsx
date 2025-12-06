@@ -1,0 +1,17 @@
+import BookingDetails from "@/components/bookings/BookingDetails";
+import BookingService from "@/utils/bookingService";
+import { notFound } from "next/navigation";
+
+export default async function BookingDetailsPage({
+  params,
+}: PageProps<"/bookings/[id]">) {
+  const { id } = await params;
+
+  const response = await new BookingService().getBooking(id);
+
+  if (!response.ok) return notFound();
+
+  const booking: BookingWithRelations = await response.json();
+
+  return <BookingDetails booking={booking} />;
+}
