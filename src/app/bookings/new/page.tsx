@@ -1,9 +1,8 @@
 "use client";
-export const dynamic = "force-dynamic";
 
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import BookingForm from "@/components/bookings/BookingForm";
 import BookingService from "@/utils/bookingService";
 import { useUser } from "@/contexts/user";
@@ -17,11 +16,18 @@ export default function NewBookingPage() {
   }
 
   const router = useRouter();
+  const [propertyId, setPropertyId] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const searchParams = useSearchParams();
-const propertyId = searchParams.get("property");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("property");
+      setPropertyId(id);
+    }
+  }, []);
 
 
   if (!propertyId) {
