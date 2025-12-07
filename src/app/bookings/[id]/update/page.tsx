@@ -1,9 +1,6 @@
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 import BookingService from "@/utils/bookingService";
 import UpdateBookingClient from "@/components/bookings/UpdateBookingClient";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default async function UpdateBookingPage({
   params,
@@ -11,7 +8,9 @@ export default async function UpdateBookingPage({
   const { id } = await params;
   const response = await new BookingService().getBooking(id);
 
-  if (!response.ok) return notFound();
+  if (!response.ok) {
+    redirect("/bookings");
+  }
 
   const booking: BookingWithRelations = await response.json();
 

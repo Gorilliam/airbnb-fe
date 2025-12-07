@@ -1,6 +1,3 @@
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 import BookingDetails from "@/components/bookings/BookingDetails";
 import BookingService from "@/utils/bookingService";
 import { redirect } from "next/navigation";
