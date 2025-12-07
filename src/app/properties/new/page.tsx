@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PropertyForm from "@/components/properties/PropertyForm";
 import PropertyService from "@/utils/propertyService";
 import { useRouter } from "next/navigation";
@@ -21,15 +21,6 @@ export default function NewPropertyPage() {
   }
 
   const router = useRouter();
-  const [template, setTemplate] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const t = params.get("template");
-      setTemplate(t);
-    }
-  }, []);
 
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -49,9 +40,9 @@ export default function NewPropertyPage() {
       setMessage("✅ Property created successfully!");
 
       setTimeout(() => router.push("/properties"), 1000);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setMessage(`❌ ${err.message}`);
+      setMessage(`❌ ${err}`);
     } finally {
       setLoading(false);
     }
@@ -63,15 +54,7 @@ export default function NewPropertyPage() {
 
       <PropertyForm
         onSubmit={handleCreateProperty}
-        loading={isLoading}
-        initialData={template === "luxury" ? (
-          {
-            name: "Luxury Suite",
-            location: "Monaco",
-            price_per_night: 999,
-            description: "An exclusive luxury suite."
-          }
-        ) : {}}/>
+        loading={isLoading}/>
 
       {message && <p className="mt-4">{message}</p>}
     </div>
