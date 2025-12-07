@@ -1,52 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import BookingService from "@/utils/bookingService";
 import { useUser } from "@/contexts/user";
+import { redirect } from "next/navigation";
 import UpdateBooking from "@/components/bookings/UpdateBooking";
 
-export default function UpdateBookingClient({ id }: { id: string }) {
+export default function UpdateBookingClient({
+  booking,
+}: {
+  booking: BookingWithRelations;
+}) {
   const { user, loading } = useUser();
-  const router = useRouter();
-  const [booking, setBooking] = useState<BookingWithRelations | null>(null);
 
-  // extra säkerhet: kalla inte backend med tomt id
-  useEffect(() => {
-    if (!id) {
-      console.error("UpdateBookingClient: id saknas");
-      router.push("/bookings");
-      return;
-    }
+  if (loading) return <p>Loading...</p>;
 
-    async function load() {
-      try {
-        const res = await new BookingService().getBooking(id);
+  if (!user) redirect("/");
 
-        if (!res.ok) {
-          console.error("getBooking svar:", res.status);
-          router.push("/bookings");
-          return;
-        }
-
-        const data: BookingWithRelations = await res.json();
-        setBooking(data);
-      } catch (err) {
-        console.error("Fel vid hämtning av booking:", err);
-        router.push("/bookings");
-      }
-    }
-
-    load();
-  }, [id, router]);
-
-  // vänta tills både user-hook och booking är klar
-  if (loading || !booking) return <p>Loading...</p>;
-
-  // klient-sidigt ägar-check
-  if (user?.user_id !== booking.user.user_id && user?.role !== "admin") {
-    router.push("/bookings");
-    return null;
+  if (user.user_id !== booking.user.user_id && user.role !== "admin") {
+    redirect("/bookings");
   }
 
   const flatBooking: Booking = {
