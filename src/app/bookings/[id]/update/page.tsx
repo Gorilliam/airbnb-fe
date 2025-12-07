@@ -10,7 +10,7 @@ export default async function UpdateBookingPage({
 
   if (!response.ok) return notFound();
 
-  const booking: Booking = await response.json();
+  const booking: BookingWithRelations = await response.json();
 
   return <UpdateBookingClient booking={booking} />;
 }
