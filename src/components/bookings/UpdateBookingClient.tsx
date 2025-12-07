@@ -10,12 +10,6 @@ export default function UpdateBookingClient({ booking }: { booking: BookingWithR
   if (loading) return <p>Loading...</p>;
 
   if (!user) redirect("/");
-  console.log("User:", user);
-  console.log("Booking:", booking);
-
-  if (user.user_id !== booking.user.user_id && user.role !== "admin") {
-    redirect("/bookings");
-  }
 
   const flatBooking: Booking = {
   id: booking.id,
