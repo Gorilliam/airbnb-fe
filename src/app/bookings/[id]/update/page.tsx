@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import BookingService from "@/utils/bookingService";
 import UpdateBookingClient from "@/components/bookings/UpdateBookingClient";
 import { notFound } from "next/navigation";
