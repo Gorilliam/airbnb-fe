@@ -1,6 +1,6 @@
 import BookingDetails from "@/components/bookings/BookingDetails";
 import BookingService from "@/utils/bookingService";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default async function BookingDetailsPage({
   params,
@@ -9,7 +9,9 @@ export default async function BookingDetailsPage({
 
   const response = await new BookingService().getBooking(id);
 
-  if (!response.ok) return notFound();
+  if (!response.ok) {
+    redirect("/bookings");
+  };
 
   const booking: BookingWithRelations = await response.json();
 
