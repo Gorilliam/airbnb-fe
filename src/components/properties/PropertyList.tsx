@@ -35,6 +35,9 @@ export default function PropertyList() {
           user?.role === "admin" ||
           (user?.role === "host" && user?.user_id === p.user_id);
 
+          const isOwner = user?.user_id === p.user_id;
+          
+
         return (
           <div
             key={p.id}
@@ -65,7 +68,11 @@ export default function PropertyList() {
             <div className="mt-4">
               {user && (
                 <>
-                  {p.availability ? (
+                  {isOwner ? (
+                    <p className="text-sm text-gray-500 italic">
+                      Your property
+                    </p>
+                  ) : p.availability ? (
                     <Link
                       href={`/bookings/new?property=${p.id}`}
                       className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
